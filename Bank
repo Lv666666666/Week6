@@ -1,0 +1,391 @@
+package Bank;
+
+import java.util.Scanner;
+
+public class Driver {
+	public static Customer customerSaving;
+	public static Customer customerChecking;
+	public static CheckingAccount ca;
+	public static SavingAccount sa;
+	
+	public static void main(String args[]){
+		int choice = menu();
+//		Scanner scan = new Scanner(System.in);
+		while(choice!=8){
+			switch(choice){
+			case 1:create();break;
+			case 2:
+				if(sa == null && ca == null) {
+					System.out.println("您还未开过户！请先开户！");
+					break;
+				}
+				save();break;
+			case 3:
+				if(sa == null && ca == null) {
+					System.out.println("您还未开过户！请先开户！");
+					break;
+				}
+				withdraw();break;
+			case 4:
+				if(sa == null && ca == null) {
+					System.out.println("您还未开过户！请先开户！");
+					break;
+				}
+				comsume();break;
+			case 5:
+				if(sa == null && ca == null) {
+					System.out.println("您还未开过户！请先开户！");
+					break;
+				}
+				repay();break;
+			case 6:
+				if(sa == null && ca == null) {
+					System.out.println("您还未开过户！请先开户！");
+					break;
+				}
+				settle();break;
+			case 7:
+				if(sa == null && ca == null) {
+					System.out.println("您还未开过户！请先开户！");
+					break;
+				}
+				balance();break;
+			default:
+				System.out.println("输入错误，请重新输入：");
+			}
+			choice = menu();
+		}
+		System.out.println("程序退出，欢迎下次使用！");
+	}
+	public static int menu(){
+		int choice = 0;
+		System.out.println("1.开户 create");
+		System.out.println("2.存款 save");
+		System.out.println("3.取款 withdraw");
+		System.out.println("4.消费 comsume");
+		System.out.println("5.还款 repay");
+		System.out.println("6.银行结算 settle");
+		System.out.println("7.查询余额 balance");
+		System.out.println("8.退出 exit");
+		Scanner scan = new Scanner(System.in);
+		System.out.print("请输入你的选择(1-8)：");
+		choice = scan.nextInt();
+		return choice;
+	}
+	public static int menu1() {
+		int choice = 0;
+		Scanner scan = new Scanner(System.in);
+		System.out.println("1.信用卡  checkingAccount");
+		System.out.println("2.存储卡 savingAccount");
+		System.out.println("3.返回 exit");
+		System.out.print("请选择(1-3):");
+		choice = scan.nextInt();
+		return choice;
+	}
+	public static void create(){
+		int choice = menu1();
+		while(choice!=3){
+				switch(choice) {
+				case 1:createcheckingAccount();break;
+				case 2:createsavingAccount();break;
+				default:
+					System.out.println("输入错误，请重新输入！");
+			}
+				choice = menu1();
+		}
+	}
+	public static void createcheckingAccount(){
+		if(ca != null) {
+			System.out.println("您已开过信用卡账户！无需再次开户！");
+			return;
+		}else {
+			Scanner scan = new Scanner(System.in);
+			System.out.print("请输入身份证号：");
+			String ssn = scan.next();
+			System.out.print("请输入姓名：");
+			String name = scan.next();
+			System.out.print("请输入卡号:");
+			String accountNum = scan.next();
+			System.out.print("请输入服务费：");
+			double serviceCharge = scan.nextDouble();
+			ca = new CheckingAccount(accountNum,1000,serviceCharge);
+			customerChecking = new Customer(ssn,name,ca,null);
+			System.out.println("您的信用卡已经成功开户，信用额度为1000！");
+		}
+	}
+	public static void createsavingAccount() {
+		if(sa != null) {
+			System.out.println("您已开过信用卡账户！无需再次开户！");
+			return;
+		}else {
+			Scanner scan = new Scanner(System.in);
+			System.out.print("请输入身份证号：");
+			String ssn = scan.next();
+			System.out.print("请输入姓名：");
+			String name = scan.next();
+			System.out.print("请输入卡号:");
+			String accountNum = scan.next();
+			System.out.print("请输入利率：");
+			double interestRate = scan.nextDouble();
+			sa = new SavingAccount(accountNum,0,interestRate);
+			customerSaving = new Customer(ssn,name,null,sa);
+			System.out.println("您的存储卡已经成功开户！");
+		}
+	}
+	public static void save(){
+		if(sa == null) {
+			System.out.println("您还未开户，请先开户！");
+			return;
+		}else {
+			Scanner scan = new Scanner(System.in);
+			System.out.print("请输入你要存的金额：");
+			double saveMoney = scan.nextDouble();
+			while(saveMoney < 0) {
+				System.out.print("输入的金额不正确，请重新输入：");
+				saveMoney = scan.nextDouble();
+			}
+			sa.setBalance(sa.getBalance() + saveMoney);
+			System.out.println("存款成功！");
+		}
+	}
+	public static void withdraw(){
+			if(sa == null) {
+				System.out.println("您还未开户，请先开户！");
+				return;
+			}else {
+				Scanner scan = new Scanner(System.in);
+				System.out.print("请输入需要取的金额：");
+				double withMoney = scan.nextDouble();
+				while(withMoney < 0 || withMoney > sa.getBalance() ) {
+					while(withMoney < 0) {
+						System.out.print("您的取款金额不正确，请重新输入：");
+						withMoney = scan.nextDouble();
+					}
+					while(withMoney > sa.getBalance()) {
+						System.out.println("取款金额超出账户余额，请重新输入：");
+						withMoney = scan.nextDouble();
+					}
+				}
+				sa.setBalance(sa.getBalance() - withMoney);
+				System.out.println("取款成功！");
+			}
+	}
+	public static void comsume(){
+		if(ca == null) {
+			System.out.println("您还未开户，请先开户！");
+			return;
+		}else {
+			Scanner scan = new Scanner(System.in);
+			System.out.print("请输入消费金额：");
+			double comMoney = scan.nextDouble();
+			while(comMoney < 0 || comMoney > ca.getBalance() ) {
+				while(comMoney < 0) {
+					System.out.print("您的消费金额不正确，请重新输入：");
+					comMoney = scan.nextDouble();
+				}
+				while(comMoney > ca.getBalance()) {
+					System.out.println("消费余额不足，请重新输入：");
+					comMoney = scan.nextDouble();
+				}
+			}
+			ca.setBalance(ca.getBalance() - comMoney);
+			System.out.println("消费成功！");
+		}
+	}
+	public static void repay(){
+		if(ca == null) {
+			System.out.println("您还未开户，请先开户！");
+			return;
+		}else {
+			Scanner scan = new Scanner(System.in);
+			System.out.print("请输入还款金额：");
+			double reMoney = scan.nextDouble();
+			while(reMoney < 0 || reMoney > 1000 - ca.getBalance()) {
+				while(reMoney < 0) {
+					System.out.print("您的消费金额不正确，请重新输入：");
+					reMoney = scan.nextDouble();
+				}
+				while(reMoney > 1000 - ca.getBalance()) {
+					System.out.print("还款金额超出需要还款的额度，请重新输入：");
+					reMoney = scan.nextDouble();
+				}
+			}
+			ca.setBalance(ca.getBalance() + reMoney);
+			System.out.println("还款成功");
+			System.out.println("还需还款" + (1000 - ca.getBalance()) + "元！");
+		}
+	}
+	public static void settle(){
+		if(sa == null && ca == null) {
+			System.out.println("您还未开过户！请先开户！");
+			return;
+		}
+		if(ca != null) {
+			System.out.println("信用卡结算：");
+			System.out.println("服务费为：" + ca.getServiceCharge());
+			ca.assessServiceCharge();
+			System.out.println("结算后，信用卡额度为：" + ca.getBalance());
+		}
+		if(sa != null) {
+			System.out.println("存储卡结算：");
+			System.out.println("利率为：" + sa.getInterestRate());
+			sa.payInterest();
+			System.out.println("结算后，存储卡余额为：" + sa.getBalance());
+		}
+	}
+	public static void balance(){
+		if(sa == null && ca == null) {
+			System.out.println("您还未开过户！请先开户！");
+			return;
+		}
+		if(ca != null) {
+			System.out.println("信用卡：");
+			System.out.println(ca.toString());
+		}
+		if(sa != null) {
+			System.out.println("存储卡：");
+			System.out.println(sa.toString());
+		}
+	}
+}
+=============================================================================
+package Bank;
+
+public class Customer {
+	private String ssn; //身份证号
+	private String name;
+	private CheckingAccount checkingaccount; //信用卡
+	private SavingAccount savingaccount;     //存储卡
+	public Customer() {
+		
+	}
+	public Customer(String ssn,String name,CheckingAccount checkingaccount,SavingAccount savingaccount) {
+		this.ssn = ssn;
+		this.name = name;
+		this.checkingaccount = checkingaccount;
+		this.savingaccount = savingaccount;
+	}
+	public String getSsn() {
+		return ssn;
+	}
+	public void setSsn(String ssn) {
+		this.ssn = ssn;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public CheckingAccount getCheckingaccount() {
+		return checkingaccount;
+	}
+	public void setCheckingaccount(CheckingAccount checkingaccount) {
+		this.checkingaccount = checkingaccount;
+	}
+	public SavingAccount getSavingaccount() {
+		return savingaccount;
+	}
+	public void setSavingaccount(SavingAccount savingaccount) {
+		this.savingaccount = savingaccount;
+	}
+	public String toString() {
+		String msg = "";
+		msg = "ssn = " + this.ssn + "\n";
+		msg += "name = " + this.name + "\n";
+		return msg;
+	}
+}
+=============================================================================
+package Bank;
+
+public class SavingAccount extends BankAccount{
+	private double interestRate;
+	
+	public SavingAccount() {
+		
+	}
+	public SavingAccount(String accountNum,double balance,double interestRate) {
+		super(accountNum,balance);
+		this.interestRate = interestRate;
+	}
+	public double getInterestRate() {
+		return interestRate;
+	}
+	public void setInterestRate(double interestRate) {
+		this.interestRate = interestRate;
+	}
+	public void payInterest(){
+		setBalance(getBalance() - getBalance()*interestRate);
+	}
+	public String toString() {
+		String msg = "";
+		msg = "interestRate = " + this.interestRate + "," + super.toString();
+		return msg;
+	}
+}
+============================================================================
+package Bank;
+
+public class CheckingAccount extends BankAccount{
+	private double serviceCharge; //服务费
+	
+	public CheckingAccount() {
+		
+	}
+	public CheckingAccount(String accountNum, double balance, double serviceCharge) {
+		super(accountNum, balance);
+		this.serviceCharge = serviceCharge;
+	}
+
+	public double getServiceCharge() {
+		return serviceCharge;
+	}
+
+	public void setServiceCharge(double serviceCharge) {
+		this.serviceCharge = serviceCharge;
+	}
+	public void assessServiceCharge(){
+		setBalance(getBalance() - serviceCharge);
+	}
+	public String toString() {
+		String msg = "";
+		msg = "serviceCharge = " + this.serviceCharge + ",  " + super.toString();
+		return msg;
+	}
+}
+===========================================================================
+package Bank;
+
+public class BankAccount {
+	private String accountNum; //卡号
+	private double balance;   //余额
+	
+	public BankAccount() {
+		
+	}
+	public BankAccount(String accountNum,double balance) {
+		this.accountNum = accountNum;
+		this.balance = balance;
+	}
+	
+	public String getAccountNum() {
+		return this.accountNum;
+	}
+	public void setAccountNum(String accountNum) {
+		this.accountNum = accountNum;
+	}
+	
+	public double getBalance() {
+		return this.balance;
+	}
+	public void setBalance(double balance) {
+		this.balance = balance;
+	}
+	
+	public String toString() {
+		String msg = "";
+		msg = "accountNum = " + this.accountNum + ", balance" + this.balance;
+		return msg;
+	}
+}
